@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public float speed;
+    public float thrustSpeed;
+    private bool isThrusting;
     private Rigidbody2D rBody;
-    private float hInput;
-    private float vInput;
-    private float rotationSpeed;
+    public float rotationDireciton;
+    public float rotationSpeed;
 
-    private void Start()
+    private void Awake()
     {
         rBody = GetComponent<Rigidbody2D>();
     }
@@ -18,17 +18,31 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        MovePlayer();
+        isThrusting = Input.GetKey("w") || Input.GetKey("up");
+        if(Input.GetKey("a") || Input.GetKey("left"))
+        {
+            rotationDireciton = 1.0f;
+        }
+        else if(Input.GetKey("d") || Input.GetKey("right"))
+        {
+            rotationDireciton = -1.0f;
+        }
+        else
+        {
+            rotationDireciton = 0.0f;
+        }
     }
-    // Function moves player
-    private void MovePlayer()
+    private void FixedUpdate()
     {
-        vInput = Input.GetAxis("Vertical");
-        rBody.velocity = new Vector2 (0, vInput) * speed;
+        if (isThrusting)
+        {
+            rBody.AddForce(this.transform.up * this.thrustSpeed);
+        }
+
+        if (rotationDireciton != 0.0f)
+        {
+            rBody.AddTorque(rotationDireciton * this.rotationSpeed);
+        }
     }
 
-    private void RotatePlayer()
-    {
-
-    }
 }
